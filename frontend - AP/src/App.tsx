@@ -5,10 +5,10 @@ import {
   RouterProvider,
 } from "react-router-dom";
 import "./App.css";
-import Login from "./pages/Login";
+import Login from "./pages/auth/Login";
 import LoginLayout from "./layouts/LoginLayout";
-import Signup from "./pages/Signup";
-import { action as LoginAction } from "./pages/Login";
+import Signup from "./pages/auth/Signup";
+import { action as LoginAction } from "./pages/auth/Login";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
