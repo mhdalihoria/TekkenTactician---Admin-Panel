@@ -1,0 +1,13 @@
+@font-face {
+  font-family: "tarrget";
+  src: url("./tarrget-normal.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "tarrgetItalic";
+  src: url("./tarrget-italic.ttf") format("truetype");
+  font-weight: normal;
+  font-style: italic;
+}
