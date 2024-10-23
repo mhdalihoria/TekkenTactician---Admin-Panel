@@ -9,9 +9,19 @@ const auth = express.Router();
 auth.post("/signup", async (req, res) => {
   const { username, email, password } = req.body;
 
+  // verifying for existing user or username
   const existingUser = await User.findOne({ email });
   if (existingUser) {
-    res.status(400).json({ success: false, message: "User Already Exists" });
+    return res
+      .status(400)
+      .json({ success: false, message: "User Already Exists" });
+  }
+
+  const existingUsername = await User.findOne({ username });
+  if (existingUsername) {
+    return res
+      .status(400)
+      .json({ success: false, message: "Username is Already Taken" });
   }
 
   const hashedPassword = await bcrypt.hash(password, 10);
@@ -24,11 +34,11 @@ auth.post("/signup", async (req, res) => {
 
   try {
     await newUser.save();
-    res
+    return res
       .status(201)
       .json({ success: true, message: "User Registered Successfully " });
   } catch (e) {
-    res.status(500).json({ success: false, message: e });
+    return res.status(500).json({ success: false, message: e });
   }
 });
 
@@ -39,7 +49,9 @@ auth.post("/login", async (req, res) => {
   const user = await User.findOne({ email });
 
   if (!user) {
-    res.status(400).json({ success: false, message: "Invalid Credientials" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid Credientials" });
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
@@ -55,7 +67,7 @@ auth.post("/login", async (req, res) => {
     }
   );
 
-  res.json({ success: true, message: "Logged-in Successfully", token });
+  return res.json({ success: true, message: "Logged-in Successfully", token });
 });
 
 export default auth;
