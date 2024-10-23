@@ -2,7 +2,7 @@ import { Box, styled } from "@mui/material";
 import { Outlet, useLocation } from "react-router-dom";
 
 const LoginLayoutContainer = styled(Box)(({ theme }) => ({
-  background: theme.palette.primary.main,
+  background: theme.palette.primary.dark,
   minHeight: "100vh",
   minWidth: "100vw",
 
