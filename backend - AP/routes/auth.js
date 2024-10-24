@@ -56,14 +56,16 @@ auth.post("/login", async (req, res) => {
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid)
-    return res.status(400).json({ message: "Invalid credentials" });
+    return res
+      .status(400)
+      .json({ success: false, message: "Invalid Credentials" });
 
   // Generate a JWT token
   const token = jwt.sign(
     { id: user._id, email: user.email },
     process.env.JWT_SECRET,
     {
-      expiresIn: "1h",
+      expiresIn: "14d",
     }
   );
 
