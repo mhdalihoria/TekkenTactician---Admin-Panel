@@ -1,9 +1,9 @@
-export const SubmitPost = async ({
-  name,
+export const LoginUser = async ({
   email,
+  password,
 }: {
-  name: string;
   email: string;
+  password: string;
 }) => {
   try {
     const response = await fetch(
@@ -11,8 +11,8 @@ export const SubmitPost = async ({
       {
         method: "POST",
         body: JSON.stringify({
-          name,
           email,
+          password,
         }),
         headers: {
           "Content-type": "application/json; charset=UTF-8",
