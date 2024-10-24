@@ -14,7 +14,7 @@ const LoginLayoutContainer = styled(Box)(({ theme }) => ({
 
 const AuthPageTitle = styled("h1")(({ theme }) => ({
   fontFamily: "Tarrget",
-  marginBottom: "5.625rem",
+  margin: "5.625rem 0",
   fontSize: "48px",
   color: theme.palette.accent.light,
 }));
