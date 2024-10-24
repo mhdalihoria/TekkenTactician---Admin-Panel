@@ -1,8 +1,6 @@
-import { Palette, styled, TextField, TextFieldProps } from "@mui/material";
+import { Palette, styled, TextField } from "@mui/material";
+import { CustomInputFieldTypes } from "../types";
 
-type CustomInputFieldTypes = TextFieldProps & {
-  fieldColor?: string;
-};
 
 const CustomInputField = styled(TextField, {
   shouldForwardProp: (prop) => prop !== "fieldColor",

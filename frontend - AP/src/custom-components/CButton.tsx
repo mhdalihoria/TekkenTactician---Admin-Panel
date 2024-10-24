@@ -1,12 +1,6 @@
 import { styled } from "@mui/material";
-import Button, { ButtonProps } from "@mui/material/Button";
-
-type CustomButtonProps = ButtonProps & {
-  // Extending ButtonProps to inherit MUI Button's props
-  color?: "primary" | "secondary" | "accent"; 
-  btnSize?: "md" | "lg"; 
-  children: React.ReactNode; // Children prop for button content
-};
+import Button from "@mui/material/Button";
+import { CustomButtonProps } from "../types";
 
 const StyledButton = styled(Button, {
   // here, we select which props don't get passed down tot he underlying dom
