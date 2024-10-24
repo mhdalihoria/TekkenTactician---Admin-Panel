@@ -16,8 +16,8 @@ export type CustomButtonProps = ButtonProps & {
 };
 
 export type CustomInputFieldTypes = TextFieldProps & {
-    fieldColor?: string;
-  };
+  fieldColor?: string;
+};
 //-------------------------------------------------------
 //------------MUI Components Types-----------------------
 //----------------------------------------------------end

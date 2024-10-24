@@ -10,8 +10,12 @@ import { CInputField } from "../../custom-components/CInputField";
 import { Alert, Box } from "@mui/material";
 import FlexBox from "../../custom-components/flex-box/FlexBox";
 import { styled } from "@mui/system";
-import { ActionData } from "../../types";
 import { useEffect, useState } from "react";
+
+export type ActionData = {
+  success: string;
+  message: string;
+};
 
 const InputFieldsContainer = styled(Box)(({ theme }) => ({
   marginBottom: "55px",
