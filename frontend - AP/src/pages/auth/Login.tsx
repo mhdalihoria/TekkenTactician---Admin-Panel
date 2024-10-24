@@ -33,7 +33,7 @@ const RedirectBox = styled(Box)(({ theme }) => ({
 
   span: {
     color: theme.palette.accent.main,
-    "text-decoration": " underline",
+    textDecoration: " underline",
     marginLeft: ".3em",
     fontWeight: 700,
   },
