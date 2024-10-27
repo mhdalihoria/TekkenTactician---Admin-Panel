@@ -10,6 +10,8 @@ import Login from "./pages/auth/Login";
 import { action as LoginAction } from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import { action as SignupAction } from "./pages/auth/Signup";
+import MainLayout from "./layouts/MainLayout";
+import Dashboard from "./pages/dashboard";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -18,8 +20,8 @@ const router = createBrowserRouter(
         <Route path="login" element={<Login />} action={LoginAction} />
         <Route path="signup" element={<Signup />} action={SignupAction} />
       </Route>
-      <Route element={<>main app layout</>}>
-        <Route path="/" element={<h1>main page</h1>} />
+      <Route element={<MainLayout />}>
+        <Route path="/" element={<Dashboard />} />
       </Route>
     </>
   )
