@@ -4,7 +4,7 @@ import {
   useActionData,
   useNavigate,
 } from "react-router-dom";
-import { LoginUser } from "../../api/auth/postRequests";
+import { LoginUser } from "../../api/postRequests";
 import FlexBox from "../../custom-components/flex-box/FlexBox";
 import { Alert, Box, styled } from "@mui/material";
 import { CInputField } from "../../custom-components/CInputField";

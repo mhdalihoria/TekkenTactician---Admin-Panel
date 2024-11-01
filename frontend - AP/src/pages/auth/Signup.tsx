@@ -5,7 +5,7 @@ import {
   useActionData,
   useNavigate,
 } from "react-router-dom";
-import { RegisterUser } from "../../api/auth/postRequests";
+import { RegisterUser } from "../../api/postRequests";
 import { CInputField } from "../../custom-components/CInputField";
 import { Alert, Box } from "@mui/material";
 import FlexBox from "../../custom-components/flex-box/FlexBox";
@@ -17,7 +17,7 @@ export type ActionData = {
   message: string;
 };
 
-const InputFieldsContainer = styled(Box)(({ theme }) => ({
+const InputFieldsContainer = styled(Box)(() => ({
   marginBottom: "55px",
 
   ".input-field": {
@@ -39,7 +39,7 @@ const RedirectBox = styled(Box)(({ theme }) => ({
   },
 }));
 
-const AlertStyled = styled(Alert)(({ theme }) => ({
+const AlertStyled = styled(Alert)(() => ({
   position: "fixed",
   bottom: "1.5rem",
   right: "1.5rem",
