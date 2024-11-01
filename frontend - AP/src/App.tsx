@@ -11,7 +11,9 @@ import { action as LoginAction } from "./pages/auth/Login";
 import Signup from "./pages/auth/Signup";
 import { action as SignupAction } from "./pages/auth/Signup";
 import MainLayout from "./layouts/MainLayout";
-import Dashboard from "./pages/dashboard";
+import Dashboard from "./pages/Dashboard";
+import AllGuides from "./pages/AllGuides";
+import { getAllChars } from "./api/getRequests";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -22,6 +24,7 @@ const router = createBrowserRouter(
       </Route>
       <Route element={<MainLayout />}>
         <Route path="/" element={<Dashboard />} />
+        <Route path="/guides" element={<AllGuides />} loader={getAllChars} />
       </Route>
     </>
   )
