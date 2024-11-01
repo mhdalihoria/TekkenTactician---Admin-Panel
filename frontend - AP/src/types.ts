@@ -21,3 +21,108 @@ export type CustomInputFieldTypes = TextFieldProps & {
 //-------------------------------------------------------
 //------------MUI Components Types-----------------------
 //----------------------------------------------------end
+
+//-------------------------------------------------------
+//------------Character Object Types---------------------
+//---------------------------------------------------start
+type ChainThrow = {
+  name: string;
+  throw: string[];
+  throwBreak: string[];
+  followUp: string[];
+  followUpBreak: string[];
+  simpleInput?: string[];
+  simpleBreak?: string[];
+};
+
+type Move = {
+  move: string;
+  description?: string;
+  escape?: string;
+  followUp?: string;
+  combo?: string;
+  category?: string;
+  input?: string;
+  type?: string;
+};
+
+type HeatDashEnder = {
+  engager?: string;
+  ender?: string;
+};
+
+type Frame = {
+  move: string;
+  frames: string;
+};
+
+type Punisher = {
+  startup: Frame[];
+};
+
+type ImportantCombo = {
+  launchers: string[];
+  followUps: string[];
+  followUpSimple?: string[];
+  vidUrl?: string;
+  endTime?: number;
+};
+
+type DetailedCounterStrategy = {
+  title: string;
+  description: string;
+  other: {
+    move: string;
+    counter: string;
+    details: string;
+  }[];
+};
+
+type Counter = {
+  overview: string;
+  effectiveRange: string;
+  counterStrategy: string;
+  weakSide: "SSR" | "SSL" | "SWR" | "SWL";
+  keyMovesToPunish: {
+    move: string;
+    punish: string;
+    purpose: string;
+  }[];
+  detailedCounterStrategies: DetailedCounterStrategy[];
+};
+
+type CreatorNote = {
+  author: string;
+  socialMediaLink: string;
+  socialMediaIcon: string;
+  stapleCombo: string[];
+  notes: {
+    title: string;
+    move?: string;
+    content: string;
+  }[];
+};
+
+export type Character = {
+  name: string;
+  image: string;
+  heatSystem?: HeatDashEnder;
+  mostImportantGrabs?: Move[];
+  guaranteedFollowUps?: Move[];
+  heatEngagers?: Move[];
+  importantMoves?: Move[];
+  punishers?: Punisher;
+  importantCombos?: ImportantCombo[];
+  wallCombos?: {
+    general: Move[];
+    withTornado: Move[];
+  };
+  comboEnders?: Move[];
+  chainThrows?: ChainThrow[];
+  counterSchema?: Counter[];
+  creatorNotes?: CreatorNote[];
+};
+
+//-------------------------------------------------------
+//------------Character Object Types---------------------
+//----------------------------------------------------end
