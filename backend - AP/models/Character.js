@@ -123,6 +123,7 @@ const creatorNotesSchema = new Schema({
 });
 
 const characterSchema = new Schema({
+  _id: String,
   name: { type: String, required: true },
   image: { type: String, required: true },
   heatSystem: heatDashEnderSchema,
