@@ -104,6 +104,7 @@ type CreatorNote = {
 };
 
 export type Character = {
+  _id: string;
   name: string;
   image: string;
   heatSystem?: HeatDashEnder;
