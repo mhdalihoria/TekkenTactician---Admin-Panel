@@ -72,12 +72,17 @@ router.get("/characters", async (req, res) => {
 router.get("/characters/:id", async (req, res) => {
   try {
     const character = await Character.findById(req.params.id);
+
     if (!character) {
-      return res.status(404).json({ message: "Character not found" });
+      return res.status(404).json({
+        message: "Character not found",
+      });
     }
     res.json(character);
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({
+      message: error.message,
+    });
   }
 });
 
