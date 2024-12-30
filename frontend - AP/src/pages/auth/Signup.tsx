@@ -1,4 +1,3 @@
-import { CButton } from "../../custom-components/CButton";
 import {
   ActionFunctionArgs,
   Form,
@@ -6,11 +5,12 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { RegisterUser } from "../../api/postRequests";
-import { CInputField } from "../../custom-components/CInputField";
+import { CInputField } from "../../custom-components/form/CInputField";
 import { Alert, Box } from "@mui/material";
 import FlexBox from "../../custom-components/flex-box/FlexBox";
 import { styled } from "@mui/system";
 import { useEffect, useState } from "react";
+import { CButton } from "../../custom-components/form/CButton";
 
 export type ActionData = {
   success: string;

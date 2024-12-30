@@ -7,9 +7,9 @@ import {
 import { LoginUser } from "../../api/postRequests";
 import FlexBox from "../../custom-components/flex-box/FlexBox";
 import { Alert, Box, styled } from "@mui/material";
-import { CInputField } from "../../custom-components/CInputField";
-import { CButton } from "../../custom-components/CButton";
+import { CInputField } from "../../custom-components/form/CInputField";
 import { useEffect, useState } from "react";
+import { CButton } from "../../custom-components/form/CButton";
 
 export type ActionData = {
   success: string;
