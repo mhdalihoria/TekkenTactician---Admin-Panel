@@ -1,5 +1,5 @@
 import { Palette, styled, TextField } from "@mui/material";
-import { CustomInputFieldTypes } from "../types";
+import { CustomInputFieldTypes } from "../../types";
 
 
 const CustomInputField = styled(TextField, {
