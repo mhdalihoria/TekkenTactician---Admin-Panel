@@ -1,6 +1,7 @@
 import { CInputField } from "../custom-components/form/CInputField";
 import MultiInputField from "../custom-components/form/MultiInputField";
-import TextEditor from "../custom-components/form/TextEditor";
+import TextEditor from "../custom-components/form/editor/TextEditor";
+
 const array = [
   {
     startup: "i13",
@@ -31,6 +32,7 @@ export default function AddGuide() {
         value="<initial_value>"
         onChange={(newContent) => console.log("Content:", newContent)}
       />
+
     </div>
   );
 }

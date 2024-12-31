@@ -17,6 +17,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Typography from "@tiptap/extension-typography";
 import Underline from "@tiptap/extension-underline";
 import { common, createLowlight } from "lowlight"; // For syntax highlighting with CodeBlockLowlight
+import FontSizeExtension from "./FontSizeExtension";
 
 // Define lowlight for syntax highlighting
 const lowlight = createLowlight(common);
@@ -45,6 +46,7 @@ const extensions = [
   }),
   Typography,
   Underline,
+  FontSizeExtension,
 ];
 
 const content = "<p>Welcome to your enhanced TipTap editor!</p>";
@@ -57,6 +59,14 @@ const TextEditor = () => {
 
   if (!editor) return null;
 
+  const setFontSize = (size: string) => {
+    //   // editor.chain().focus().setFontSize(size).run();
+    //   // editor.chain().focus().setMark("textStyle", {FontSize: 50}).run();
+    //   editor.chain().focus().setMark('textStyle', { fontSize: '24px' }).run();
+    editor.chain().focus().toggleMark("textStyle", { fontSize: size }).run();
+  };
+
+  console.log(editor.getHTML());
   return (
     <div>
       {/* Toolbar */}
@@ -181,7 +191,7 @@ const TextEditor = () => {
       </div>
 
       {/* TipTap Editor */}
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} style={{ background: "red" }} />
 
       {/* Bubble Menu */}
       <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>
@@ -194,6 +204,9 @@ const TextEditor = () => {
         <button onClick={() => editor.chain().focus().toggleUnderline().run()}>
           Underline
         </button>
+        <button onClick={() => setFontSize("14px")}>14px</button>
+        <button onClick={() => setFontSize("16px")}>16px</button>
+        <button onClick={() => setFontSize("24px")}>24px</button>
       </BubbleMenu>
     </div>
   );
