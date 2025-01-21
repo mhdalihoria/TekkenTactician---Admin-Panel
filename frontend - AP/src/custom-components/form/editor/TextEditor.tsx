@@ -60,13 +60,9 @@ const TextEditor = () => {
   if (!editor) return null;
 
   const setFontSize = (size: string) => {
-    //   // editor.chain().focus().setFontSize(size).run();
-    //   // editor.chain().focus().setMark("textStyle", {FontSize: 50}).run();
-    //   editor.chain().focus().setMark('textStyle', { fontSize: '24px' }).run();
     editor.chain().focus().toggleMark("textStyle", { fontSize: size }).run();
   };
 
-  console.log(editor.getHTML());
   return (
     <div>
       {/* Toolbar */}

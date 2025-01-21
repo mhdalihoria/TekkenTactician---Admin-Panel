@@ -92,14 +92,14 @@ const CustomInputField = styled(TextField, {
     },
   };
 });
-
 export const CInputField = ({
   name,
   label,
   type,
   variant = "outlined",
   fieldColor = "primary.main",
-  // fieldColor = "#fff",
+  value = "", // Default to an empty string
+  onChange,
   ...restProps
 }: CustomInputFieldTypes) => {
   return (
@@ -109,6 +109,8 @@ export const CInputField = ({
       type={type}
       variant={variant}
       fieldColor={fieldColor}
+      value={value}
+      onChange={onChange}
       {...restProps}
     />
   );

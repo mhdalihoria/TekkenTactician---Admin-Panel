@@ -16,6 +16,7 @@ import AllGuides from "./pages/AllGuides";
 import { getAllChars, getSingleChar } from "./api/getRequests";
 import CharGuide from "./pages/CharGuide";
 import AddGuide from "./pages/AddGuide";
+import { action as formAction} from "./pages/AddGuide";
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -28,7 +29,7 @@ const router = createBrowserRouter(
         <Route path="/" element={<Dashboard />} />
         <Route path="/guides" element={<AllGuides />} loader={getAllChars} />
         <Route path="/guides/:id" element={<CharGuide />} loader={getSingleChar} />
-        <Route path="/add-guide" element={<AddGuide />} />
+        <Route path="/add-guide" element={<AddGuide />} action={formAction}/>
       </Route>
     </>
   )

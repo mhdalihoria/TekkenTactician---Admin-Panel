@@ -1,4 +1,4 @@
-import { BoxProps, ButtonProps, TextFieldProps } from "@mui/material";
+import { BoxProps, ButtonProps, SelectProps, TextFieldProps } from "@mui/material";
 import { ReactNode } from "react";
 
 //-------------------------------------------------------
@@ -17,6 +17,11 @@ export type CustomButtonProps = ButtonProps & {
 
 export type CustomInputFieldTypes = TextFieldProps & {
   fieldColor?: string;
+};
+
+export type CustomSelectFieldTypes = SelectProps & {
+  fieldColor?: string;
+  options: { value: string; name: string }[]; // The array of options for the select field
 };
 //-------------------------------------------------------
 //------------MUI Components Types-----------------------
