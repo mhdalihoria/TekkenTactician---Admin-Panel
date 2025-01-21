@@ -14,18 +14,17 @@ export default function AddGuide() {
     },
   ]);
 
-  const addBlockAfter = (blockId, blockTemplate) => {
+  const addBlockAfter = (blockId) => {
     setBlocks((prevBlocks) => {
       const index = prevBlocks.findIndex((block) => block.id === blockId);
       if (index === -1) return prevBlocks;
 
-      const newId = nanoid();
       const newBlock = {
-        id: newId,
-        fields: blockTemplate.fields.map((field) => ({
+        id: nanoid(),
+        fields: prevBlocks[index].fields.map((field) => ({
           ...field,
-          id: nanoid(), // Generate new IDs for each field
-          value: "", // Reset values for the new block
+          id: nanoid(), // New IDs for fields
+          value: "", // Reset field values
         })),
       };
 
@@ -33,6 +32,27 @@ export default function AddGuide() {
       newBlocks.splice(index + 1, 0, newBlock);
       return newBlocks;
     });
+  };
+
+  const addFieldToBlock = (blockId) => {
+    setBlocks((prevBlocks) =>
+      prevBlocks.map((block) =>
+        block.id === blockId
+          ? {
+              ...block,
+              fields: [
+                ...block.fields,
+                {
+                  id: nanoid(),
+                  name: `new_field_${block.fields.length + 1}`,
+                  value: "",
+                  component: CInputField,
+                },
+              ],
+            }
+          : block
+      )
+    );
   };
 
   const handleFieldChange = (blockId, fieldId, newValue) => {
@@ -68,10 +88,17 @@ export default function AddGuide() {
                   />
                 </div>
               ))}
+              <button
+                type="button"
+                onClick={() => addFieldToBlock(block.id)}
+                style={{ marginTop: "1rem" }}
+              >
+                Add Field
+              </button>
             </div>
             <button
               type="button"
-              onClick={() => addBlockAfter(block.id, block)}
+              onClick={() => addBlockAfter(block.id)}
               style={{ marginTop: "1rem" }}
             >
               Add Block After
