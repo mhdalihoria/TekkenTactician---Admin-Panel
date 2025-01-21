@@ -51,11 +51,16 @@ export default function AddGuide() {
         // Add a new field to the block
         return prevBlocks.map((block) => {
           if (block.id === id && block.type === "block") {
+            const nextFieldName = (block.fields.length + 1).toString(); // Increment number for field name
             return {
               ...block,
               fields: [
                 ...block.fields,
-                { id: nanoid(), name: `new_field_${block.fields.length + 1}`, value: "", component: CInputField },
+                {
+                  id: nanoid(),
+                  name: `${block.fields[0].name}-${nextFieldName}`, // Append the incremented number
+                  value: "",
+                },
               ],
             };
           }
@@ -63,13 +68,14 @@ export default function AddGuide() {
         });
       } else {
         // Add a new standalone field to the blocks array
+        const nextFieldName = (prevBlocks.length).toString(); // Increment number for standalone field name
         return [
           ...prevBlocks,
           {
             id: nanoid(),
             type: "field", // New standalone field
             value: "",
-            name: `new_field_${prevBlocks.length + 1}`,
+            name: `agent-${nextFieldName}`,
             component: CInputField,
           },
         ];
@@ -77,20 +83,30 @@ export default function AddGuide() {
     });
   };
 
-  const handleFieldChange = (id, newValue) => {
+  const handleFieldChange = (blockId, fieldId, newValue) => {
     setBlocks((prevBlocks) =>
-      prevBlocks.map((block) =>
-        block.id === id
-          ? { ...block, value: newValue }
-          : block
-      )
+      prevBlocks.map((block) => {
+        if (block.type === "block" && block.id === blockId) {
+          // Update the specific field inside the block
+          return {
+            ...block,
+            fields: block.fields.map((field) =>
+              field.id === fieldId ? { ...field, value: newValue } : field
+            ),
+          };
+        } else if (block.type === "field" && block.id === blockId) {
+          // Update the standalone field directly
+          return { ...block, value: newValue };
+        }
+        return block;
+      })
     );
   };
 
   return (
     <div>
       <Form method="post">
-        {blocks.map((block, index) => {
+        {blocks.map((block) => {
           if (block.type === "block") {
             return (
               <div key={block.id} style={{ marginBottom: "2rem" }}>
@@ -99,19 +115,14 @@ export default function AddGuide() {
                     <div key={field.id} style={{ marginBottom: "1rem" }}>
                       <field.component
                         name={field.name}
-                        label={field.name}
+                        label={field.name} // Label stays the same
                         value={field.value}
-                        onChange={(e) => handleFieldChange(field.id, e.target.value)}
+                        onChange={(e) =>
+                          handleFieldChange(block.id, field.id, e.target.value)
+                        }
                       />
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => addFieldAfter(block.id, true)}
-                    style={{ marginTop: "1rem" }}
-                  >
-                    Add Field to Block
-                  </button>
                 </div>
                 <button
                   type="button"
@@ -127,9 +138,11 @@ export default function AddGuide() {
               <div key={block.id} style={{ marginBottom: "1rem" }}>
                 <block.component
                   name={block.name}
-                  label={block.name}
+                  label={block.name} // Label stays the same
                   value={block.value}
-                  onChange={(e) => handleFieldChange(block.id, e.target.value)}
+                  onChange={(e) =>
+                    handleFieldChange(block.id, block.id, e.target.value)
+                  }
                 />
                 <button
                   type="button"
