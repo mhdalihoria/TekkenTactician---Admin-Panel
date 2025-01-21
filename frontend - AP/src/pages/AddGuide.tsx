@@ -1,19 +1,28 @@
 import { useState } from "react";
 import { nanoid } from "nanoid";
-import { ActionFunctionArgs, Form } from "react-router-dom";
 import { CInputField } from "../custom-components/form/CInputField";
+import { ActionFunctionArgs, Form } from "react-router-dom";
 
 export default function AddGuide() {
   const [blocks, setBlocks] = useState([
     {
       id: nanoid(),
+      type: "block", // Identifies this as a block
       fields: [
         { id: nanoid(), name: "combo", value: "", component: CInputField },
         { id: nanoid(), name: "agent", value: "", component: CInputField },
       ],
     },
+    {
+      id: nanoid(),
+      type: "field", // Identifies this as a field
+      value: "",
+      name: "agent",
+      component: CInputField,
+    },
   ]);
 
+  // Add a new block after the current block
   const addBlockAfter = (blockId) => {
     setBlocks((prevBlocks) => {
       const index = prevBlocks.findIndex((block) => block.id === blockId);
@@ -21,10 +30,11 @@ export default function AddGuide() {
 
       const newBlock = {
         id: nanoid(),
+        type: "block",
         fields: prevBlocks[index].fields.map((field) => ({
           ...field,
-          id: nanoid(), // New IDs for fields
-          value: "", // Reset field values
+          id: nanoid(),
+          value: "",
         })),
       };
 
@@ -34,37 +44,44 @@ export default function AddGuide() {
     });
   };
 
-  const addFieldToBlock = (blockId) => {
-    setBlocks((prevBlocks) =>
-      prevBlocks.map((block) =>
-        block.id === blockId
-          ? {
+  // Add a new field to a block (or as standalone if it's a standalone field)
+  const addFieldAfter = (id, isBlock) => {
+    setBlocks((prevBlocks) => {
+      if (isBlock) {
+        // Add a new field to the block
+        return prevBlocks.map((block) => {
+          if (block.id === id && block.type === "block") {
+            return {
               ...block,
               fields: [
                 ...block.fields,
-                {
-                  id: nanoid(),
-                  name: `new_field_${block.fields.length + 1}`,
-                  value: "",
-                  component: CInputField,
-                },
+                { id: nanoid(), name: `new_field_${block.fields.length + 1}`, value: "", component: CInputField },
               ],
-            }
-          : block
-      )
-    );
+            };
+          }
+          return block;
+        });
+      } else {
+        // Add a new standalone field to the blocks array
+        return [
+          ...prevBlocks,
+          {
+            id: nanoid(),
+            type: "field", // New standalone field
+            value: "",
+            name: `new_field_${prevBlocks.length + 1}`,
+            component: CInputField,
+          },
+        ];
+      }
+    });
   };
 
-  const handleFieldChange = (blockId, fieldId, newValue) => {
+  const handleFieldChange = (id, newValue) => {
     setBlocks((prevBlocks) =>
       prevBlocks.map((block) =>
-        block.id === blockId
-          ? {
-              ...block,
-              fields: block.fields.map((field) =>
-                field.id === fieldId ? { ...field, value: newValue } : field
-              ),
-            }
+        block.id === id
+          ? { ...block, value: newValue }
           : block
       )
     );
@@ -73,38 +90,59 @@ export default function AddGuide() {
   return (
     <div>
       <Form method="post">
-        {blocks.map((block) => (
-          <div key={block.id} style={{ marginBottom: "2rem" }}>
-            <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
-              {block.fields.map((field) => (
-                <div key={field.id} style={{ marginBottom: "1rem" }}>
-                  <field.component
-                    name={field.name}
-                    label={field.name}
-                    value={field.value}
-                    onChange={(e) =>
-                      handleFieldChange(block.id, field.id, e.target.value)
-                    }
-                  />
+        {blocks.map((block, index) => {
+          if (block.type === "block") {
+            return (
+              <div key={block.id} style={{ marginBottom: "2rem" }}>
+                <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+                  {block.fields.map((field) => (
+                    <div key={field.id} style={{ marginBottom: "1rem" }}>
+                      <field.component
+                        name={field.name}
+                        label={field.name}
+                        value={field.value}
+                        onChange={(e) => handleFieldChange(field.id, e.target.value)}
+                      />
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addFieldAfter(block.id, true)}
+                    style={{ marginTop: "1rem" }}
+                  >
+                    Add Field to Block
+                  </button>
                 </div>
-              ))}
-              <button
-                type="button"
-                onClick={() => addFieldToBlock(block.id)}
-                style={{ marginTop: "1rem" }}
-              >
-                Add Field
-              </button>
-            </div>
-            <button
-              type="button"
-              onClick={() => addBlockAfter(block.id)}
-              style={{ marginTop: "1rem" }}
-            >
-              Add Block After
-            </button>
-          </div>
-        ))}
+                <button
+                  type="button"
+                  onClick={() => addBlockAfter(block.id)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Block After
+                </button>
+              </div>
+            );
+          } else if (block.type === "field") {
+            return (
+              <div key={block.id} style={{ marginBottom: "1rem" }}>
+                <block.component
+                  name={block.name}
+                  label={block.name}
+                  value={block.value}
+                  onChange={(e) => handleFieldChange(block.id, e.target.value)}
+                />
+                <button
+                  type="button"
+                  onClick={() => addFieldAfter(block.id, false)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Standalone Field
+                </button>
+              </div>
+            );
+          }
+          return null;
+        })}
         <button type="submit">Submit</button>
       </Form>
     </div>
