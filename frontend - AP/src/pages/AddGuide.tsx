@@ -2,38 +2,50 @@ import { useState } from "react";
 import { nanoid } from "nanoid";
 import { ActionFunctionArgs, Form } from "react-router-dom";
 import { CInputField } from "../custom-components/form/CInputField";
-import TextEditor from "../custom-components/form/editor/TextEditor";
-
 
 export default function AddGuide() {
-  const [fields, setFields] = useState([
-    { id: nanoid(), value: "", name: "combo", component: CInputField },
-    { id: nanoid(), value: "", name: "agent",  component: CInputField },
+  const [blocks, setBlocks] = useState([
+    {
+      id: nanoid(),
+      fields: [
+        { id: nanoid(), name: "combo", value: "", component: CInputField },
+        { id: nanoid(), name: "agent", value: "", component: CInputField },
+      ],
+    },
   ]);
-  
-  const addFieldAfter = (id, component = CInputField) => {
-    setFields((prevFields) => {
-      const index = prevFields.findIndex((field) => field.id === id);
-      if (index === -1) return prevFields;
-  
+
+  const addBlockAfter = (blockId, blockTemplate) => {
+    setBlocks((prevBlocks) => {
+      const index = prevBlocks.findIndex((block) => block.id === blockId);
+      if (index === -1) return prevBlocks;
+
       const newId = nanoid();
-      const newFields = [...prevFields];
-      const previousFieldName = prevFields[index].name; // Get the name of the previous field
-      newFields.splice(index + 1, 0, {
+      const newBlock = {
         id: newId,
-        value: "",
-        name: previousFieldName, // Set the name to match the previous field
-        component,
-      });
-      return newFields;
+        fields: blockTemplate.fields.map((field) => ({
+          ...field,
+          id: nanoid(), // Generate new IDs for each field
+          value: "", // Reset values for the new block
+        })),
+      };
+
+      const newBlocks = [...prevBlocks];
+      newBlocks.splice(index + 1, 0, newBlock);
+      return newBlocks;
     });
   };
-  
 
-  const handleFieldChange = (id, newValue) => {
-    setFields((prevFields) =>
-      prevFields.map((field) =>
-        field.id === id ? { ...field, value: newValue } : field
+  const handleFieldChange = (blockId, fieldId, newValue) => {
+    setBlocks((prevBlocks) =>
+      prevBlocks.map((block) =>
+        block.id === blockId
+          ? {
+              ...block,
+              fields: block.fields.map((field) =>
+                field.id === fieldId ? { ...field, value: newValue } : field
+              ),
+            }
+          : block
       )
     );
   };
@@ -41,21 +53,28 @@ export default function AddGuide() {
   return (
     <div>
       <Form method="post">
-        {fields.map((field, index) => (
-          <div key={field.id} style={{ marginBottom: "1rem" }}>
-            {/* Dynamically render the component with a unique name */}
-            <field.component
-              name={field.name} // Use index or field.id as the name
-              label={field.name}
-              value={field.value}
-              onChange={(e) => handleFieldChange(field.id, e.target.value)}
-            />
+        {blocks.map((block) => (
+          <div key={block.id} style={{ marginBottom: "2rem" }}>
+            <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+              {block.fields.map((field) => (
+                <div key={field.id} style={{ marginBottom: "1rem" }}>
+                  <field.component
+                    name={field.name}
+                    label={field.name}
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(block.id, field.id, e.target.value)
+                    }
+                  />
+                </div>
+              ))}
+            </div>
             <button
               type="button"
-              onClick={() => addFieldAfter(field.id, field.component)}
-              style={{ marginLeft: "1rem" }}
+              onClick={() => addBlockAfter(block.id, block)}
+              style={{ marginTop: "1rem" }}
             >
-              Add After
+              Add Block After
             </button>
           </div>
         ))}
