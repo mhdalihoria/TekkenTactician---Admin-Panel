@@ -4,21 +4,51 @@ import { CInputField } from "../custom-components/form/CInputField";
 import { ActionFunctionArgs, Form } from "react-router-dom";
 
 export default function AddGuide() {
-  const [blocks, setBlocks] = useState([
+  const [intro, setIntro] = useState([
     {
       id: nanoid(),
       type: "block",
       fields: [
-        { id: nanoid(), name: "combo", value: "", component: CInputField },
-        { id: nanoid(), name: "agent", value: "", component: CInputField },
+        { id: nanoid(), name: "name", value: "", component: CInputField },
+        { id: nanoid(), name: "image", value: "", component: CInputField },
       ],
     },
+  ]);
+  const [heatENGR, setHeatENGR] = useState([
     {
       id: nanoid(),
-      type: "field",
-      value: "",
-      name: "agent",
-      component: CInputField,
+      type: "block",
+      fields: [
+        { id: nanoid(), name: "move", value: "", component: CInputField },
+        {
+          id: nanoid(),
+          name: "description",
+          value: "",
+          component: CInputField,
+        },
+      ],
+    },
+  ]);
+
+  const [punishers, setPunishers] = useState([
+    {
+      id: nanoid(),
+      type: "block",
+      fields: [
+        { id: nanoid(), name: "move", value: "", component: CInputField },
+        { id: nanoid(), name: "frames", value: "", component: CInputField },
+      ],
+    },
+  ]);
+
+  const [guaranteedflwups, setGuaranteedflwups] = useState([
+    {
+      id: nanoid(),
+      type: "block",
+      fields: [
+        { id: nanoid(), name: "move", value: "", component: CInputField },
+        { id: nanoid(), name: "frames", value: "", component: CInputField },
+      ],
     },
   ]);
 
@@ -28,27 +58,41 @@ export default function AddGuide() {
       launchers: [{ id: nanoid(), value: "" }],
       followUps: [{ id: nanoid(), value: "" }],
       followUpSimple: [{ id: nanoid(), value: "" }],
+      url: [{ id: nanoid(), value: "" }],
     },
   ]);
 
-  const addFieldToNestedBlock = (comboId, blockName) => {
-    setImportantCombos((prevCombos) =>
+  const [comboEnders, setComboenders] = useState([
+    {
+      id: nanoid(),
+      wallbrk: [{ id: nanoid(), value: "", category: "wall break" }],
+      wallcarry: [{ id: nanoid(), value: "", category: "wall carry" }],
+      dmg: [{ id: nanoid(), value: "", category: "for dmg" }],
+      flrbrk: [{ id: nanoid(), value: "", category: "floor break" }],
+    },
+  ]);
+
+  const addFieldToNestedBlock = (comboId, blockName, stateSetter) => {
+    stateSetter((prevCombos) =>
       prevCombos.map((combo) =>
         combo.id === comboId
           ? {
               ...combo,
-              [blockName]: [
-                ...combo[blockName],
-                { id: nanoid(), value: "" },
-              ],
+              [blockName]: [...combo[blockName], { id: nanoid(), value: "" }],
             }
           : combo
       )
     );
   };
 
-  const updateNestedField = (comboId, blockName, fieldId, newValue) => {
-    setImportantCombos((prevCombos) =>
+  const updateNestedField = (
+    comboId,
+    blockName,
+    fieldId,
+    newValue,
+    stateSetter
+  ) => {
+    stateSetter((prevCombos) =>
       prevCombos.map((combo) =>
         combo.id === comboId
           ? {
@@ -62,8 +106,8 @@ export default function AddGuide() {
     );
   };
 
-  const addParentCombo = () => {
-    setImportantCombos((prevCombos) => [
+  const addParentCombo = (stateSetter) => {
+    stateSetter((prevCombos) => [
       ...prevCombos,
       {
         id: nanoid(),
@@ -74,8 +118,8 @@ export default function AddGuide() {
     ]);
   };
 
-  const addBlockAfter = (blockId) => {
-    setBlocks((prevBlocks) => {
+  const addBlockAfter = (blockId, stateSetter) => {
+    stateSetter((prevBlocks) => {
       const index = prevBlocks.findIndex((block) => block.id === blockId);
       if (index === -1) return prevBlocks;
 
@@ -95,8 +139,8 @@ export default function AddGuide() {
     });
   };
 
-  const addFieldAfter = (id, isBlock) => {
-    setBlocks((prevBlocks) => {
+  const addFieldAfter = (id, isBlock, stateSetter) => {
+    stateSetter((prevBlocks) => {
       if (isBlock) {
         return prevBlocks.map((block) => {
           if (block.id === id && block.type === "block") {
@@ -129,8 +173,8 @@ export default function AddGuide() {
     });
   };
 
-  const handleFieldChange = (blockId, fieldId, newValue) => {
-    setBlocks((prevBlocks) =>
+  const handleFieldChange = (blockId, fieldId, newValue, stateSetter) => {
+    stateSetter((prevBlocks) =>
       prevBlocks.map((block) => {
         if (block.type === "block" && block.id === blockId) {
           return {
@@ -150,7 +194,8 @@ export default function AddGuide() {
   return (
     <div>
       <Form method="post">
-        {blocks.map((block) => {
+        {/* char intro */}
+        {intro.map((block) => {
           if (block.type === "block") {
             return (
               <div key={block.id} style={{ marginBottom: "2rem" }}>
@@ -162,7 +207,62 @@ export default function AddGuide() {
                         label={field.name}
                         value={field.value}
                         onChange={(e) =>
-                          handleFieldChange(block.id, field.id, e.target.value)
+                          handleFieldChange(
+                            block.id,
+                            field.id,
+                            e.target.value,
+                            setIntro
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            );
+          } else if (block.type === "field") {
+            return (
+              <div key={block.id} style={{ marginBottom: "1rem" }}>
+                <block.component
+                  name={block.name}
+                  label={block.name}
+                  value={block.value}
+                  onChange={(e) =>
+                    handleFieldChange(block.id, block.id, e.target.value)
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => addFieldAfter(block.id, false)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Standalone Field
+                </button>
+              </div>
+            );
+          }
+          return null;
+        })}
+        {/* heat engagers */}
+        <h1>Heat Engagers</h1>
+        {heatENGR.map((block) => {
+          if (block.type === "block") {
+            return (
+              <div key={block.id} style={{ marginBottom: "2rem" }}>
+                <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+                  {block.fields.map((field) => (
+                    <div key={field.id} style={{ marginBottom: "1rem" }}>
+                      <field.component
+                        name={field.name}
+                        label={field.name}
+                        value={field.value}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            block.id,
+                            field.id,
+                            e.target.value,
+                            setHeatENGR
+                          )
                         }
                       />
                     </div>
@@ -170,10 +270,10 @@ export default function AddGuide() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => addBlockAfter(block.id)}
+                  onClick={() => addBlockAfter(block.id, setHeatENGR)}
                   style={{ marginTop: "1rem" }}
                 >
-                  Add Block After
+                  Add Heat Engager
                 </button>
               </div>
             );
@@ -200,8 +300,133 @@ export default function AddGuide() {
           }
           return null;
         })}
-
-        {importantCombos.map((combo) => (
+        {/* punishers */}
+        <h1>Punishers</h1>
+        {punishers.map((block) => {
+          if (block.type === "block") {
+            return (
+              <div key={block.id} style={{ marginBottom: "2rem" }}>
+                <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+                  {block.fields.map((field) => (
+                    <div key={field.id} style={{ marginBottom: "1rem" }}>
+                      <field.component
+                        name={field.name}
+                        label={field.name}
+                        value={field.value}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            block.id,
+                            field.id,
+                            e.target.value,
+                            setPunishers
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addBlockAfter(block.id, setPunishers)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Block After
+                </button>
+              </div>
+            );
+          } else if (block.type === "field") {
+            return (
+              <div key={block.id} style={{ marginBottom: "1rem" }}>
+                <block.component
+                  name={block.name}
+                  label={block.name}
+                  value={block.value}
+                  onChange={(e) =>
+                    handleFieldChange(
+                      block.id,
+                      block.id,
+                      e.target.value,
+                      setPunishers
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => addFieldAfter(block.id, false)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Punishers
+                </button>
+              </div>
+            );
+          }
+          return null;
+        })}
+        {/* followups */}
+        <h1>Guaranteed Follow-ups</h1>
+        {guaranteedflwups.map((block) => {
+          if (block.type === "block") {
+            return (
+              <div key={block.id} style={{ marginBottom: "2rem" }}>
+                <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+                  {block.fields.map((field) => (
+                    <div key={field.id} style={{ marginBottom: "1rem" }}>
+                      <field.component
+                        name={field.name}
+                        label={field.name}
+                        value={field.value}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            block.id,
+                            field.id,
+                            e.target.value,
+                            setGuaranteedflwups
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addBlockAfter(block.id, setGuaranteedflwups)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Block After
+                </button>
+              </div>
+            );
+          } else if (block.type === "field") {
+            return (
+              <div key={block.id} style={{ marginBottom: "1rem" }}>
+                <block.component
+                  name={block.name}
+                  label={block.name}
+                  value={block.value}
+                  onChange={(e) =>
+                    handleFieldChange(
+                      block.id,
+                      block.id,
+                      e.target.value,
+                      setGuaranteedflwups
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => addFieldAfter(block.id, false)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Punishers
+                </button>
+              </div>
+            );
+          }
+          return null;
+        })}
+        {/* combos */}
+        <h1>Combos:</h1>
+        {importantCombos.map((combo, index) => (
           <div
             key={combo.id}
             style={{
@@ -210,8 +435,67 @@ export default function AddGuide() {
               padding: "1rem",
             }}
           >
-            <h3>Parent Block:</h3>
-            {["launchers", "followUps", "followUpSimple"].map((blockName) => (
+            <h3>Combo - {index + 1}</h3>
+            {["launchers", "followUps", "followUpSimple", "url"].map(
+              (blockName) => (
+                <div key={blockName} style={{ marginBottom: "1rem" }}>
+                  <h4>{blockName}</h4>
+                  {combo[blockName].map((field) => (
+                    <div key={field.id} style={{ marginBottom: "0.5rem" }}>
+                      <CInputField
+                        name={`${blockName}-${field.id}`}
+                        value={field.value}
+                        label={`${blockName} Field`}
+                        onChange={(e) =>
+                          updateNestedField(
+                            setImportantCombos,
+                            combo.id,
+                            blockName,
+                            field.id,
+                            e.target.value
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                  {blockName !== "url" && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        addFieldToNestedBlock(
+                          combo.id,
+                          blockName,
+                          setImportantCombos
+                        )
+                      }
+                    >
+                      Add to {blockName}
+                    </button>
+                  )}
+                </div>
+              )
+            )}
+            <button
+              type="button"
+              onClick={() => addParentCombo(setImportantCombos)}
+            >
+              Add Parent Combo
+            </button>
+          </div>
+        ))}
+        {/* combo enders */}
+
+        <h1>Combos Enders:</h1>
+        {comboEnders.map((combo, index) => (
+          <div
+            key={combo.id}
+            style={{
+              marginBottom: "2rem",
+              border: "1px solid #ccc",
+              padding: "1rem",
+            }}
+          >
+            {["wallbrk", "wallcarry", "dmg", "flrbrk"].map((blockName) => (
               <div key={blockName} style={{ marginBottom: "1rem" }}>
                 <h4>{blockName}</h4>
                 {combo[blockName].map((field) => (
@@ -222,6 +506,7 @@ export default function AddGuide() {
                       label={`${blockName} Field`}
                       onChange={(e) =>
                         updateNestedField(
+                          setComboenders,
                           combo.id,
                           blockName,
                           field.id,
@@ -231,15 +516,22 @@ export default function AddGuide() {
                     />
                   </div>
                 ))}
-                <button
-                  type="button"
-                  onClick={() => addFieldToNestedBlock(combo.id, blockName)}
-                >
-                  Add to {blockName}
-                </button>
+                {blockName !== "url" && (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      addFieldToNestedBlock(combo.id, blockName, setComboenders)
+                    }
+                  >
+                    Add to {blockName}
+                  </button>
+                )}
               </div>
             ))}
-            <button type="button" onClick={addParentCombo}>
+            <button
+              type="button"
+              onClick={() => addParentCombo(setComboenders)}
+            >
               Add Parent Combo
             </button>
           </div>
