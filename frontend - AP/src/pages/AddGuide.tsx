@@ -55,39 +55,62 @@ export default function AddGuide() {
   const [importantCombos, setImportantCombos] = useState([
     {
       id: nanoid(),
-      launchers: [{ id: nanoid(), value: "" }],
-      followUps: [{ id: nanoid(), value: "" }],
-      followUpSimple: [{ id: nanoid(), value: "" }],
-      url: [{ id: nanoid(), value: "" }],
+      sections: [
+        { name: "launchers", fields: [{ id: nanoid(), value: "" }] },
+        { name: "followUps", fields: [{ id: nanoid(), value: "" }] },
+        { name: "followUpSimple", fields: [{ id: nanoid(), value: "" }] },
+        { name: "url", fields: [{ id: nanoid(), value: "" }] },
+      ],
     },
   ]);
 
-  const [comboEnders, setComboenders] = useState([
+  const [comboEnders, setComboEnders] = useState([
     {
       id: nanoid(),
-      wallbrk: [{ id: nanoid(), value: "", category: "wall break" }],
-      wallcarry: [{ id: nanoid(), value: "", category: "wall carry" }],
-      dmg: [{ id: nanoid(), value: "", category: "for dmg" }],
-      flrbrk: [{ id: nanoid(), value: "", category: "floor break" }],
+      sections: [
+        {
+          name: "wallbrk",
+          fields: [{ id: nanoid(), value: "", category: "wall break" }],
+        },
+        {
+          name: "wallcarry",
+          fields: [{ id: nanoid(), value: "", category: "wall carry" }],
+        },
+        {
+          name: "dmg",
+          fields: [{ id: nanoid(), value: "", category: "for dmg" }],
+        },
+        {
+          name: "flrbrk",
+          fields: [{ id: nanoid(), value: "", category: "floor break" }],
+        },
+      ],
     },
   ]);
 
-  const addFieldToNestedBlock = (comboId, blockName, stateSetter) => {
+  const addFieldToSection = (comboId, sectionName, stateSetter) => {
     stateSetter((prevCombos) =>
       prevCombos.map((combo) =>
         combo.id === comboId
           ? {
               ...combo,
-              [blockName]: [...combo[blockName], { id: nanoid(), value: "" }],
+              sections: combo.sections.map((section) =>
+                section.name === sectionName
+                  ? {
+                      ...section,
+                      fields: [...section.fields, { id: nanoid(), value: "" }],
+                    }
+                  : section
+              ),
             }
           : combo
       )
     );
   };
 
-  const updateNestedField = (
+  const updateField = (
     comboId,
-    blockName,
+    sectionName,
     fieldId,
     newValue,
     stateSetter
@@ -97,23 +120,32 @@ export default function AddGuide() {
         combo.id === comboId
           ? {
               ...combo,
-              [blockName]: combo[blockName].map((field) =>
-                field.id === fieldId ? { ...field, value: newValue } : field
+              sections: combo.sections.map((section) =>
+                section.name === sectionName
+                  ? {
+                      ...section,
+                      fields: section.fields.map((field) =>
+                        field.id === fieldId
+                          ? { ...field, value: newValue }
+                          : field
+                      ),
+                    }
+                  : section
               ),
             }
           : combo
       )
     );
   };
-
-  const addParentCombo = (stateSetter) => {
+  const addParentCombo = (stateSetter, initialSections) => {
     stateSetter((prevCombos) => [
       ...prevCombos,
       {
         id: nanoid(),
-        launchers: [{ id: nanoid(), value: "" }],
-        followUps: [{ id: nanoid(), value: "" }],
-        followUpSimple: [{ id: nanoid(), value: "" }],
+        sections: initialSections.map((sectionName) => ({
+          name: sectionName,
+          fields: [{ id: nanoid(), value: "" }],
+        })),
       },
     ]);
   };
@@ -426,7 +458,7 @@ export default function AddGuide() {
         })}
         {/* combos */}
         <h1>Combos:</h1>
-        {importantCombos.map((combo, index) => (
+        {importantCombos.map((combo) => (
           <div
             key={combo.id}
             style={{
@@ -435,58 +467,59 @@ export default function AddGuide() {
               padding: "1rem",
             }}
           >
-            <h3>Combo - {index + 1}</h3>
-            {["launchers", "followUps", "followUpSimple", "url"].map(
-              (blockName) => (
-                <div key={blockName} style={{ marginBottom: "1rem" }}>
-                  <h4>{blockName}</h4>
-                  {combo[blockName].map((field) => (
-                    <div key={field.id} style={{ marginBottom: "0.5rem" }}>
-                      <CInputField
-                        name={`${blockName}-${field.id}`}
-                        value={field.value}
-                        label={`${blockName} Field`}
-                        onChange={(e) =>
-                          updateNestedField(
-                            setImportantCombos,
-                            combo.id,
-                            blockName,
-                            field.id,
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  ))}
-                  {blockName !== "url" && (
-                    <button
-                      type="button"
-                      onClick={() =>
-                        addFieldToNestedBlock(
+            {combo.sections.map((section) => (
+              <div key={section.name} style={{ marginBottom: "1rem" }}>
+                <h4>{section.name}</h4>
+                {section.fields.map((field) => (
+                  <div key={field.id} style={{ marginBottom: "0.5rem" }}>
+                    <CInputField
+                      name={`${section.name}-${field.id}`}
+                      value={field.value}
+                      label={`${section.name} Field`}
+                      onChange={(e) =>
+                        updateField(
                           combo.id,
-                          blockName,
+                          section.name,
+                          field.id,
+                          e.target.value,
                           setImportantCombos
                         )
                       }
-                    >
-                      Add to {blockName}
-                    </button>
-                  )}
-                </div>
-              )
-            )}
+                    />
+                  </div>
+                ))}
+                <button
+                  type="button"
+                  onClick={() =>
+                    addFieldToSection(
+                      combo.id,
+                      section.name,
+                      setImportantCombos
+                    )
+                  }
+                >
+                  Add to {section.name}
+                </button>
+              </div>
+            ))}
             <button
               type="button"
-              onClick={() => addParentCombo(setImportantCombos)}
+              onClick={() =>
+                addParentCombo(setImportantCombos, [
+                  "wallbrk",
+                  "wallcarry",
+                  "dmg",
+                  "flrbrk",
+                ])
+              }
             >
               Add Parent Combo
             </button>
           </div>
         ))}
         {/* combo enders */}
-
         <h1>Combos Enders:</h1>
-        {comboEnders.map((combo, index) => (
+        {comboEnders.map((combo) => (
           <div
             key={combo.id}
             style={{
@@ -495,42 +528,47 @@ export default function AddGuide() {
               padding: "1rem",
             }}
           >
-            {["wallbrk", "wallcarry", "dmg", "flrbrk"].map((blockName) => (
-              <div key={blockName} style={{ marginBottom: "1rem" }}>
-                <h4>{blockName}</h4>
-                {combo[blockName].map((field) => (
+            {combo.sections.map((section) => (
+              <div key={section.name} style={{ marginBottom: "1rem" }}>
+                <h4>{section.name}</h4>
+                {section.fields.map((field) => (
                   <div key={field.id} style={{ marginBottom: "0.5rem" }}>
                     <CInputField
-                      name={`${blockName}-${field.id}`}
+                      name={`${section.name}-${field.id}`}
                       value={field.value}
-                      label={`${blockName} Field`}
+                      label={`${section.name} Field`}
                       onChange={(e) =>
-                        updateNestedField(
-                          setComboenders,
+                        updateField(
                           combo.id,
-                          blockName,
+                          section.name,
                           field.id,
-                          e.target.value
+                          e.target.value,
+                          setComboEnders
                         )
                       }
                     />
                   </div>
                 ))}
-                {blockName !== "url" && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      addFieldToNestedBlock(combo.id, blockName, setComboenders)
-                    }
-                  >
-                    Add to {blockName}
-                  </button>
-                )}
+                <button
+                  type="button"
+                  onClick={() =>
+                    addFieldToSection(combo.id, section.name, setComboEnders)
+                  }
+                >
+                  Add to {section.name}
+                </button>
               </div>
             ))}
             <button
               type="button"
-              onClick={() => addParentCombo(setComboenders)}
+              onClick={() =>
+                addParentCombo(setComboEnders, [
+                  "wallbrk",
+                  "wallcarry",
+                  "dmg",
+                  "flrbrk",
+                ])
+              }
             >
               Add Parent Combo
             </button>
