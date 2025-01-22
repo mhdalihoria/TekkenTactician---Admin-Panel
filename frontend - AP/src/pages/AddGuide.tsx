@@ -22,6 +22,57 @@ export default function AddGuide() {
     },
   ]);
 
+  const [importantCombos, setImportantCombos] = useState([
+    {
+      id: nanoid(),
+      launchers: [{ id: nanoid(), value: "" }],
+      followUps: [{ id: nanoid(), value: "" }],
+      followUpSimple: [{ id: nanoid(), value: "" }],
+    },
+  ]);
+
+  const addFieldToNestedBlock = (comboId, blockName) => {
+    setImportantCombos((prevCombos) =>
+      prevCombos.map((combo) =>
+        combo.id === comboId
+          ? {
+              ...combo,
+              [blockName]: [
+                ...combo[blockName],
+                { id: nanoid(), value: "" },
+              ],
+            }
+          : combo
+      )
+    );
+  };
+  const updateNestedField = (comboId, blockName, fieldId, newValue) => {
+    setImportantCombos((prevCombos) =>
+      prevCombos.map((combo) =>
+        combo.id === comboId
+          ? {
+              ...combo,
+              [blockName]: combo[blockName].map((field) =>
+                field.id === fieldId ? { ...field, value: newValue } : field
+              ),
+            }
+          : combo
+      )
+    );
+  };
+  const addParentCombo = () => {
+    setImportantCombos((prevCombos) => [
+      ...prevCombos,
+      {
+        id: nanoid(),
+        launchers: [{ id: nanoid(), value: "" }],
+        followUps: [{ id: nanoid(), value: "" }],
+        followUpSimple: [{ id: nanoid(), value: "" }],
+      },
+    ]);
+  };
+      
+
   // Add a new block after the current block
   const addBlockAfter = (blockId) => {
     setBlocks((prevBlocks) => {
@@ -156,6 +207,41 @@ export default function AddGuide() {
           }
           return null;
         })}
+
+{importantCombos.map((combo) => (
+  <div key={combo.id} style={{ marginBottom: "2rem", border: "1px solid #ccc", padding: "1rem" }}>
+    <h3>Parent Block: {combo.id}</h3>
+
+    {/* Render Nested Blocks */}
+    {["launchers", "followUps", "followUpSimple"].map((blockName) => (
+      <div key={blockName} style={{ marginBottom: "1rem" }}>
+        <h4>{blockName}</h4>
+        {combo[blockName].map((field) => (
+          <div key={field.id} style={{ marginBottom: "0.5rem" }}>
+            <CInputField
+              name={`${blockName}-${field.id}`}
+              value={field.value}
+              label={`${blockName} Field`}
+              onChange={(e) => updateNestedField(combo.id, blockName, field.id, e.target.value)}
+            />
+          </div>
+        ))}
+        <button
+          type="button"
+          onClick={() => addFieldToNestedBlock(combo.id, blockName)}
+        >
+          Add to {blockName}
+        </button>
+      </div>
+    ))}
+
+    {/* Add Parent Combo */}
+    <button type="button" onClick={addParentCombo}>
+      Add Parent Combo
+    </button>
+  </div>
+))}
+
         <button type="submit">Submit</button>
       </Form>
     </div>
