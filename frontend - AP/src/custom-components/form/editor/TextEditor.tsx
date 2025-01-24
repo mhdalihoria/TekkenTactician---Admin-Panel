@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useEditor, EditorContent, BubbleMenu } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import TextStyle from "@tiptap/extension-text-style";
@@ -7,7 +7,7 @@ import BulletList from "@tiptap/extension-bullet-list";
 import CodeBlockLowlight from "@tiptap/extension-code-block-lowlight";
 import Color from "@tiptap/extension-color";
 import Focus from "@tiptap/extension-focus";
-import Heading, { Level } from "@tiptap/extension-heading";
+import Heading from "@tiptap/extension-heading";
 import Image from "@tiptap/extension-image";
 import Link from "@tiptap/extension-link";
 import OrderedList from "@tiptap/extension-ordered-list";
@@ -16,13 +16,13 @@ import Placeholder from "@tiptap/extension-placeholder";
 import TextAlign from "@tiptap/extension-text-align";
 import Typography from "@tiptap/extension-typography";
 import Underline from "@tiptap/extension-underline";
-import { common, createLowlight } from "lowlight"; // For syntax highlighting with CodeBlockLowlight
+import { common, createLowlight } from "lowlight";
 import FontSizeExtension from "./FontSizeExtension";
 
-// Define lowlight for syntax highlighting
+// Syntax highlighting setup
 const lowlight = createLowlight(common);
 
-// Define extensions
+// Editor extensions
 const extensions = [
   StarterKit,
   TextStyle,
@@ -31,37 +31,35 @@ const extensions = [
   CodeBlockLowlight.configure({ lowlight }),
   Color,
   Focus,
-  Heading.configure({
-    levels: [1, 2, 3, 4, 5, 6],
-  }),
+  Heading.configure({ levels: [1, 2, 3, 4, 5, 6] }),
   Image,
   Link,
   OrderedList,
   Paragraph,
-  Placeholder.configure({
-    placeholder: "Start typing here...",
-  }),
-  TextAlign.configure({
-    types: ["heading", "paragraph"],
-  }),
+  Placeholder.configure({ placeholder: "Start typing here..." }),
+  TextAlign.configure({ types: ["heading", "paragraph"] }),
   Typography,
   Underline,
   FontSizeExtension,
 ];
 
-const content = "<p>Welcome to your enhanced TipTap editor!</p>";
-
-const TextEditor = () => {
+const TextEditor = ({ name, value, onChange }) => {
   const editor = useEditor({
     extensions,
-    content,
+    content: value, // Initialize with the current value
+    onUpdate: ({ editor }) => {
+      const content = editor.getHTML(); // Use editor.getText() for plain text
+      onChange(content); // Pass the updated content to the parent
+    },
   });
 
+  useEffect(() => {
+    if (editor && value !== editor.getHTML()) {
+      editor.commands.setContent(value || ""); // Sync only if there's a mismatch
+    }
+  }, [value, editor]);
+  
   if (!editor) return null;
-
-  const setFontSize = (size: string) => {
-    editor.chain().focus().toggleMark("textStyle", { fontSize: size }).run();
-  };
 
   return (
     <div>
@@ -187,7 +185,7 @@ const TextEditor = () => {
       </div>
 
       {/* TipTap Editor */}
-      <EditorContent editor={editor} style={{ background: "red" }} />
+      <EditorContent editor={editor} style={{ background: "red" }} name={name}/>
 
       {/* Bubble Menu */}
       <BubbleMenu editor={editor} tippyOptions={{ duration: 100 }}>

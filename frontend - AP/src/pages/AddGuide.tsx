@@ -2,6 +2,7 @@ import { useState } from "react";
 import { nanoid } from "nanoid";
 import { CInputField } from "../custom-components/form/CInputField";
 import { ActionFunctionArgs, Form } from "react-router-dom";
+import TextEditor from "../custom-components/form/editor/TextEditor";
 
 export default function AddGuide() {
   const [intro, setIntro] = useState([
@@ -88,6 +89,30 @@ export default function AddGuide() {
     },
   ]);
 
+  const [chainThrows, setChainThrows] = useState([
+    {
+      id: nanoid(),
+      type: "block",
+      fields: [
+        {
+          id: nanoid(),
+          name: "name",
+          type: "input-field",
+          value: "",
+          component: CInputField,
+        },
+        {
+          id: nanoid(),
+          name: "throw",
+          type: "text-editor",
+          value: "",
+          component: TextEditor,
+        },
+      ],
+    },
+  ]);
+
+  
   const addFieldToSection = (comboId, sectionName, stateSetter) => {
     stateSetter((prevCombos) =>
       prevCombos.map((combo) =>
@@ -207,25 +232,24 @@ export default function AddGuide() {
 
   const handleFieldChange = (blockId, fieldId, newValue, stateSetter) => {
     stateSetter((prevBlocks) =>
-      prevBlocks.map((block) => {
-        if (block.type === "block" && block.id === blockId) {
-          return {
-            ...block,
-            fields: block.fields.map((field) =>
-              field.id === fieldId ? { ...field, value: newValue } : field
-            ),
-          };
-        } else if (block.type === "field" && block.id === blockId) {
-          return { ...block, value: newValue };
-        }
-        return block;
-      })
+      prevBlocks.map((block) =>
+        block.id === blockId
+          ? {
+              ...block,
+              fields: block.fields.map((field) => {
+                return field.id === fieldId
+                  ? { ...field, value: newValue } // Update only the target field's value
+                  : field;
+              }),
+            }
+          : block
+      )
     );
   };
 
   return (
     <div>
-      <Form method="post">
+      <Form method="post" encType="application/json">
         {/* char intro */}
         {intro.map((block) => {
           if (block.type === "block") {
@@ -571,6 +595,43 @@ export default function AddGuide() {
               }
             >
               Add Parent Combo
+            </button>
+          </div>
+        ))}
+        <h1>Chain Throws</h1>
+        {chainThrows.map((block) => (
+          <div key={block.id} style={{ marginBottom: "2rem" }}>
+            <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+              {block.fields.map((field) => (
+                <div key={field.id} style={{ marginBottom: "1rem" }}>
+                  <field.component
+                    name={field.name}
+                    label={field.name}
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        block.id,
+                        field.id,
+                        field.type === "input-field" ? e.target.value : e,
+                        setChainThrows
+                      )
+                    }
+                  />
+                </div>
+              ))}
+              <textarea
+                name="throw"
+                value={chainThrows[0].fields[1].value}
+                style={{ display: "none" }}
+                readOnly
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => addBlockAfter(block.id, setChainThrows)}
+              style={{ marginTop: "1rem" }}
+            >
+              Add Block After
             </button>
           </div>
         ))}
