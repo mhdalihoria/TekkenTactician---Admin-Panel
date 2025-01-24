@@ -112,7 +112,65 @@ export default function AddGuide() {
     },
   ]);
 
-  
+  const [creatorNotes, setCreatorNotes] = useState([
+    {
+      id: nanoid(),
+      type: "block",
+      fields: [
+        {
+          id: nanoid(),
+          name: "creator-notes",
+          type: "text-editor",
+          value: "",
+          component: TextEditor,
+        },
+      ],
+    },
+  ]);
+
+  const [antiOverView, setAntiOverview] = useState([
+    {
+      id: nanoid(),
+      type: "block",
+      fields: [
+        {
+          id: nanoid(),
+          name: "anti--overview",
+          type: "text-editor",
+          value: "",
+          component: TextEditor,
+        },
+      ],
+    },
+  ]);
+
+  const [antiCounterStrategy, setAntiCounterStrategy] = useState([
+    {
+      id: nanoid(),
+      type: "block",
+      fields: [
+        {
+          id: nanoid(),
+          name: "anti--counter-strategy",
+          type: "text-editor",
+          value: "",
+          component: TextEditor,
+        },
+      ],
+    },
+  ]);
+
+  const [antiMsc, setAntiMsc] = useState([
+    {
+      id: nanoid(),
+      type: "block",
+      fields: [
+        { id: nanoid(), name: "Weak Side", value: "", component: CInputField },
+        { id: nanoid(), name: "Range", value: "", component: CInputField },
+      ],
+    },
+  ]);
+
   const addFieldToSection = (comboId, sectionName, stateSetter) => {
     stateSetter((prevCombos) =>
       prevCombos.map((combo) =>
@@ -635,6 +693,183 @@ export default function AddGuide() {
             </button>
           </div>
         ))}
+
+        <h1>Creator Notes</h1>
+        {creatorNotes.map((block) => (
+          <div key={block.id} style={{ marginBottom: "2rem" }}>
+            <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+              {block.fields.map((field) => (
+                <div key={field.id} style={{ marginBottom: "1rem" }}>
+                  <field.component
+                    name={field.name}
+                    label={field.name}
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        block.id,
+                        field.id,
+                        field.type === "input-field" ? e.target.value : e,
+                        setCreatorNotes
+                      )
+                    }
+                  />
+                </div>
+              ))}
+              <textarea
+                name="throw"
+                value={creatorNotes[0].fields[0].value}
+                style={{ display: "none" }}
+                readOnly
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => addBlockAfter(block.id, setCreatorNotes)}
+              style={{ marginTop: "1rem" }}
+            >
+              Add Block After
+            </button>
+          </div>
+        ))}
+        {/* anti guide */}
+        <h1 style={{ fontSize: "3rem" }}>Anti-Guide:</h1>
+
+        <h1>Character Overview</h1>
+        {antiOverView.map((block) => (
+          <div key={block.id} style={{ marginBottom: "2rem" }}>
+            <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+              {block.fields.map((field) => (
+                <div key={field.id} style={{ marginBottom: "1rem" }}>
+                  <field.component
+                    name={field.name}
+                    label={field.name}
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        block.id,
+                        field.id,
+                        field.type === "input-field" ? e.target.value : e,
+                        setAntiOverview
+                      )
+                    }
+                  />
+                </div>
+              ))}
+              <textarea
+                name="throw"
+                value={antiOverView[0].fields[0].value}
+                style={{ display: "none" }}
+                readOnly
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => addBlockAfter(block.id, setCreatorNotes)}
+              style={{ marginTop: "1rem" }}
+            >
+              Add Block After
+            </button>
+          </div>
+        ))}
+
+        <h1>Counter Strategy</h1>
+        {antiCounterStrategy.map((block) => (
+          <div key={block.id} style={{ marginBottom: "2rem" }}>
+            <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+              {block.fields.map((field) => (
+                <div key={field.id} style={{ marginBottom: "1rem" }}>
+                  <field.component
+                    name={field.name}
+                    label={field.name}
+                    value={field.value}
+                    onChange={(e) =>
+                      handleFieldChange(
+                        block.id,
+                        field.id,
+                        field.type === "input-field" ? e.target.value : e,
+                        setAntiCounterStrategy
+                      )
+                    }
+                  />
+                </div>
+              ))}
+              <textarea
+                name="throw"
+                value={antiCounterStrategy[0].fields[0].value}
+                style={{ display: "none" }}
+                readOnly
+              />
+            </div>
+            <button
+              type="button"
+              onClick={() => addBlockAfter(block.id, setCreatorNotes)}
+              style={{ marginTop: "1rem" }}
+            >
+              Add Block After
+            </button>
+          </div>
+        ))}
+
+        {antiMsc.map((block) => {
+          if (block.type === "block") {
+            return (
+              <div key={block.id} style={{ marginBottom: "2rem" }}>
+                <div style={{ border: "1px solid #ccc", padding: "1rem" }}>
+                  {block.fields.map((field) => (
+                    <div key={field.id} style={{ marginBottom: "1rem" }}>
+                      <field.component
+                        name={field.name}
+                        label={field.name}
+                        value={field.value}
+                        onChange={(e) =>
+                          handleFieldChange(
+                            block.id,
+                            field.id,
+                            e.target.value,
+                            setAntiMsc
+                          )
+                        }
+                      />
+                    </div>
+                  ))}
+                </div>
+                <button
+                  type="button"
+                  onClick={() => addBlockAfter(block.id, setAntiMsc)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Block After
+                </button>
+              </div>
+            );
+          } else if (block.type === "field") {
+            return (
+              <div key={block.id} style={{ marginBottom: "1rem" }}>
+                <block.component
+                  name={block.name}
+                  label={block.name}
+                  value={block.value}
+                  onChange={(e) =>
+                    handleFieldChange(
+                      block.id,
+                      block.id,
+                      e.target.value,
+                      setAntiMsc
+                    )
+                  }
+                />
+                <button
+                  type="button"
+                  onClick={() => addFieldAfter(block.id, false, setAntiMsc)}
+                  style={{ marginTop: "1rem" }}
+                >
+                  Add Punishers
+                </button>
+              </div>
+            );
+          }
+          return null;
+        })}
 
         <button type="submit">Submit</button>
       </Form>
